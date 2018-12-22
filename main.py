@@ -1,0 +1,6 @@
+import conf
+import powerCalc
+
+
+if __name__ == "__main__":
+    exit
