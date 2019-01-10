@@ -16,6 +16,7 @@ def setup():
     GPIO.setmode(GPIO.BOARD)
     GPIO.setup(config.pulsePin, GPIO.IN)
     mq.on_connect = on_connect
+    mq.connect(config.mqttBroker, port=1883, keepalive=60)
     mq.loop_start()
 
 def on_connect(client, userdata, flags, rc):
@@ -26,7 +27,7 @@ def publishTime(timeToPublish):
     mq.publish(config.mqttTopic, payload=timeToPublish, qos=2, retain=False)
 
 if __name__ == "__main__":
-    mq = _paho.Client()
+    mq = _paho.Client(client_id="", clean_session=True, userdata=None, protocol=MQTTv311, transport="tcp")
     setup()
     prevP = getNextPulse(config.pulsePin)
     while 1:
