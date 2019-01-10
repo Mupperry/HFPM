@@ -21,7 +21,7 @@ def on_connect(client, userdata, flags, rc):
 
 def on_message(client, userdata, msg):
     # Check if this is the first message we have recieved since start
-    if prevP == -1.0:
+    if prevP < 0:
         prevP = float(msg.payload)
     else:
         currP = float(msg.payload)
@@ -29,12 +29,17 @@ def on_message(client, userdata, msg):
         print("prevP:", prevP)
         dt = currP - prevP
         print("dt:",dt)
-        pow = powerCalc.timeToPower(deltaTime=dt, pulsesPerKwh=config.pulsesPerKwh)
+        power = powerCalc.timeToPower(deltaTime=dt, pulsesPerKwh=config.pulsesPerKwh)
         energy = float(powerCalc.pulseToEnergy(pulsesPerKwh=config.pulsesPerKwh))
         accEnergy += energy
-        print("Power:",pow)
+        print("Power:",power)
         print("Energy:", accEnergy)
+        publishPowerEnergy(power, accEnergy)
         prevP = currP    # Prepare previous timestamp for next run
+
+def publishPowerEnergy(power,energy):
+    mq.publish(config.mqttTopicPublishPower, payload=power, qos=0, retain=true)
+    mq.publish(config.mqttTopicPublishEnergy, payload=energy, qos=0, retain=true)
 
 if __name__ == "__main__":  
     setup()
