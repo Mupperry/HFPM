@@ -23,11 +23,11 @@ def on_connect(client, userdata, flags, rc):
     print("Connected to server with result code", str(rc))
 
 def publishTime(timeToPublish):
-    print("Publishing " + timeToPublish + " to " + config.mqttTopic)
+    print("Publishing:", timeToPublish)
     mq.publish(config.mqttTopic, payload=timeToPublish, qos=2, retain=False)
 
 if __name__ == "__main__":
-    mq = _paho.Client(client_id="", clean_session=True, userdata=None, protocol=MQTTv311, transport="tcp")
+    mq = _paho.Client(client_id="", clean_session=True, userdata=None, protocol=_paho.MQTTv311, transport="tcp")
     setup()
     prevP = getNextPulse(config.pulsePin)
     while 1:
@@ -35,6 +35,7 @@ if __name__ == "__main__":
             currP = getNextPulse(config.pulsePin)
             publishTime(currP)
             prevP = currP    # Prepare previous timestamp for next run
+            time.sleep(1)   # Basic ratelimiting
         except KeyboardInterrupt:
             mq.loop_stop()
             GPIO.cleanup()
