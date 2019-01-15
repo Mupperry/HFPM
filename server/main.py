@@ -3,7 +3,7 @@ import powerCalc
 import time
 import paho.mqtt.client as _paho
 
-mq = _paho.Client()
+mq = _paho.Client(client_id="", clean_session=True, userdata=None, protocol=_paho.MQTTv311, transport="tcp")
 prevP = -1.0
 currP = 0.0
 accEnergy = 0.0
@@ -21,13 +21,17 @@ def on_connect(client, userdata, flags, rc):
     mq.subscribe(config.mqttTopicListen)
 
 def on_message(client, userdata, msg):
+    global prevP
+    global currP
+    global accEnergy
+    timestamp = msg.payload.decode("utf-8")
+    print("Recieved:", timestamp)
+    timestamp = float(timestamp)
     # Check if this is the first message we have recieved since start
-    if prevP < 0:
-        prevP = float(msg.payload)
+    if(prevP < 0):
+        prevP = timestamp
     else:
-        currP = float(msg.payload)
-        print("curP:", currP)
-        print("prevP:", prevP)
+        currP = timestamp
         dt = currP - prevP
         print("dt:",dt)
         power = powerCalc.timeToPower(deltaTime=dt, pulsesPerKwh=config.pulsesPerKwh)
@@ -35,12 +39,15 @@ def on_message(client, userdata, msg):
         accEnergy += energy
         print("Power:",power)
         print("Energy:", accEnergy)
-        publishPowerEnergy(power, accEnergy)
         prevP = currP    # Prepare previous timestamp for next run
+        publishPowerEnergy(power, accEnergy)
+
 
 def publishPowerEnergy(power,energy):
-    mq.publish(config.mqttTopicPublishPower, payload=power, qos=0, retain=true)
-    mq.publish(config.mqttTopicPublishEnergy, payload=energy, qos=0, retain=true)
+    fPower = int(round(power, 0))
+    fEnergy = round(energy, 2)
+    mq.publish(config.mqttTopicPublishPower, payload=fPower, qos=0, retain=True)
+    mq.publish(config.mqttTopicPublishEnergy, payload=fEnergy, qos=0, retain=True)
 
 if __name__ == "__main__":  
     setup()
