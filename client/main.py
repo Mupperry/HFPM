@@ -17,6 +17,7 @@ def setup():
     GPIO.setmode(GPIO.BOARD)
     GPIO.setup(config.pulsePin, GPIO.IN)
     mq.on_connect = on_connect
+    mq.username_pw_set(config.accessToken)
     mq.connect(config.mqttBroker, port=1883, keepalive=60)
     mq.loop_start()
 
