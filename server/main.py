@@ -13,6 +13,7 @@ accEnergy = 0.0
 def setup():
     mq.on_connect = on_connect
     mq.on_message = on_message
+    mq.username_pw_set(config.accessToken)
     mq.connect(config.mqttBroker, port=1883, keepalive=60)
     mq.loop_start()
 
