@@ -2,6 +2,7 @@ import config
 import powerCalc
 import time
 import paho.mqtt.client as _paho
+import json
 
 mq = _paho.Client(client_id="", clean_session=True, userdata=None, protocol=_paho.MQTTv311, transport="tcp")
 prevP = -1.0
@@ -24,9 +25,9 @@ def on_message(client, userdata, msg):
     global prevP
     global currP
     global accEnergy
-    timestamp = msg.payload.decode("utf-8")
-    print("Recieved:", timestamp)
-    timestamp = float(timestamp)
+    serPayload = json.loads(msg.payload.decode("utf-8"))
+    print("Recieved:", serPayload)
+    timestamp = float(serPayload['lastPulse'])
     # Check if this is the first message we have recieved since start
     if(prevP < 0):
         prevP = timestamp

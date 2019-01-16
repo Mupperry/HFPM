@@ -2,6 +2,7 @@ import config
 import RPi.GPIO as GPIO
 import time
 import paho.mqtt.client as _paho
+import json
 
 # pinNumber: pin that should be listened to
 # returns the time (POSIX) for when a pulse was detected
@@ -23,8 +24,9 @@ def on_connect(client, userdata, flags, rc):
     print("Connected to server with result code", str(rc))
 
 def publishTime(timeToPublish):
-    print("Publishing:", timeToPublish)
-    mq.publish(config.mqttTopic, payload=timeToPublish, qos=2, retain=False)
+    payload = json.dumps({"lastPulse": timeToPublish})
+    print("Publishing:", payload)
+    mq.publish(config.mqttTopic, payload=payload, qos=1, retain=False)
 
 if __name__ == "__main__":
     mq = _paho.Client(client_id="", clean_session=True, userdata=None, protocol=_paho.MQTTv311, transport="tcp")
