@@ -25,10 +25,10 @@ def setup():
 def on_connect(client, userdata, flags, rc):
     print("Connected to server with result code", str(rc))
 
-# Publish power and energy information (json format) via MQTT client
+# Publish power and energy information (json format, with timestamp in milliseconds) via MQTT client
 def publishPowerEnergy(power,energy):
     fPower = int(round(power, 0))   # Rounds to integer for cleaner values
-    payload = json.dumps({"ts":time.time(), "values":{"energy": energy, "power": fPower}})
+    payload = json.dumps({"ts":time.time()*1000, "values":{"energy": energy, "power": fPower}})
     mq.publish(config.mqttTopic, payload=payload, qos=1, retain=True)
 
 # Calculate power and energy, given timestamp of last pulse, previous pulse and 
