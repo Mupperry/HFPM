@@ -37,7 +37,7 @@ def publishPowerEnergy(power,energy):
 def calcAndPublish(prevP, currP, pPerKWh):
     # Calculate power and energy
     dt = currP - prevP
-    power = powerCalc.timeToPower(deltaTimet=dt, pulsesPerKWh=pPerKWh)
+    power = powerCalc.timeToPower(deltaTime=dt, pulsesPerKWh=pPerKWh)
     energy = powerCalc.pulseToEnergy(pulsesPerKWh=pPerKWh)
     # Publish both in one json string
     publishPowerEnergy(power, energy)
