@@ -41,7 +41,7 @@ def calcAndPublish(prevP, currP, pPerKWh):
 if __name__ == "__main__":
     mq = _paho.Client(client_id="", clean_session=True, userdata=None, protocol=_paho.MQTTv311, transport="tcp")
     setup()
-    prevP = getNextPulse(config.pulsePin)   # Need delta time for power
+    prevP = getNextPulse(config.pulsePin)   # Need delta time for power calculation
     time.sleep(1) 
     while 1:
         try:
