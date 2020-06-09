@@ -11,3 +11,7 @@ pulsesPerKWh = 100
 
 # Needed if using Thingsboard. Called "username" in MQTT-speak
 accessToken = ""
+
+# Minimum time between pulses in seconds. Used for basic rate limiting, can be lowered if measuring 
+# power >15kW to avoid missing pulses. Should in 99% of cases be left as is.
+rateLimitTime = 0.25
