@@ -13,5 +13,5 @@ pulsesPerKWh = 100
 accessToken = ""
 
 # Minimum time between pulses in seconds. Used for basic rate limiting, can be lowered if measuring 
-# power >15kW to avoid missing pulses. Should in 99% of cases be left as is.
+# power >14kW to avoid missing pulses. If you are unsure, leave as is. 
 rateLimitTime = 0.25
