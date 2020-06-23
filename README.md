@@ -9,14 +9,14 @@ The power meter in question needs to have an LED* that pulses for every set amou
 *To be fair, this is not necessarily true. Some meters have a signal output that behaves in much the same way as the LED mentioned would. However, that involves accessing the inside of your fuse box, which might not be wise and/or legal depending on where you are and your qualifications.
 
 ### Raspberry Pi
-Any version of the Raspberry Pi that supports the `RPi.GPIO` Python library should work. Tested on model 1b running Raspbian. 
+Any version of the Raspberry Pi that supports the `RPi.GPIO` Python library should work. You also need the `paho-mqtt` library, which can be installed using pip. Tested on model 1b running Raspbian.  
 
 ### Sensor circuit
 A circuit that can detect when the LED on the power meter blinks is needed. This circuit will make a GPIO-pin on the Raspberry Pi go high or low depending on the state of the LED. One crude but effective way of doing this is using a photo resistor and a regular resistor to create a voltage divider. Adding a capacitor as a low-pass filter is strongly recommended, otherwise EMI might cause false readings when high current loads are switched on or off (e.g. oven, water heater etc.). Below is similar to what has been running well for months.
 
 ![Circuit Diagram](https://raw.githubusercontent.com/Mupperry/HFPM/master/images/circuit_diagram.png)
 
-These component values are not universally optimal by any stretch, they mostly serve as a starting point. 
+These component values are not universally optimal by any stretch, they mostly serve as a starting point.
 What the resistance of R2 should be mainly comes down to how much stray light the LDR (light dependant resistor) experiences. If there is little stray light, you can get away with using a high resistance (>10k), giving you a higher voltage at the GPIO when the LED pulses, making it easier to detect. In scenarios where stray light can not be avoided, it might be necessary to lower the resistance in order to make sure that the GPIO actually goes low when the LED is off.
 The choice of C1 comes down to the amount of EMI affecting the circuit and how long the pulse from the LED lasts. Too low capacitance will cause false positives due to EMI, giving you unresonably high power and energy values. Too high capacitance on the other hand, will filter out the pulse from the LED, making it undetectable. Try something like 0.1 to 1 micro farad to begin with.
 
@@ -35,7 +35,7 @@ The broker can be run on the same Raspberry Pi that is acting as the power monit
 
 2. Change the values in the `config.py` file to suit your environment.
 
-3. Run the monitor using `sudo python main.py`. Sudo is needed since we have to access GPIO, which by default means we need to be root.
+3. Run the monitor using `sudo python3 main.py`. Sudo is needed since we have to access GPIO, which by default means we need to be root.
 
 4. You can now test your setup. Temporarily connecting the GPIO pin in question straight to 3.3V can be useful for debugging (don`t use 5V).
 
